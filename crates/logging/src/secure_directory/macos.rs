@@ -378,9 +378,9 @@ impl SecureRunDirectory {
         validate_private_log_file(&source_file)
             .map_err(|error| map_io(stream, operation, &error))?;
         let _ = self.inspect_file(
-            destination
-                .to_str()
-                .map_err(|_| LogError::configuration(operation, LogErrorKind::InvalidPath))?,
+            destination.to_str().map_err(|_| {
+                LogError::configuration(operation, crate::LogErrorKind::InvalidPath)
+            })?,
             stream,
             operation,
         )?;

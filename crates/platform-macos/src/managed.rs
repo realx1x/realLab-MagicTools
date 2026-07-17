@@ -1803,7 +1803,7 @@ impl OwnedMacosChild {
             return Ok(MacosManagedExitPoll::Exited);
         }
 
-        let mut status = 0_c_int;
+        let mut status: c_int = 0;
         clear_errno();
         // Safety: pid is the positive, unreaped child returned by posix_spawn;
         // WNOHANG makes this a single non-blocking observation.
@@ -1852,7 +1852,7 @@ impl OwnedMacosChild {
             return Ok(());
         }
         loop {
-            let mut status = 0_c_int;
+            let mut status: c_int = 0;
             clear_errno();
             // Safety: pid is the positive, unreaped child returned by posix_spawn.
             let result = unsafe { libc::waitpid(self.pid, &mut status, libc::WNOHANG) };

@@ -376,7 +376,7 @@ mod platform {
         Ok(())
     }
 
-    fn read_bounded(mut file: File) -> Result<Vec<u8>, SessionTokenReadError> {
+    fn read_bounded(file: File) -> Result<Vec<u8>, SessionTokenReadError> {
         let mut bytes = Vec::with_capacity(super::SESSION_TOKEN_BYTES + 1);
         file.take((super::SESSION_TOKEN_BYTES + 1) as u64)
             .read_to_end(&mut bytes)
