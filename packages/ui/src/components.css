@@ -1,0 +1,229 @@
+.ui-button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: default;
+  transition:
+    border-color var(--duration-hover) ease,
+    background-color var(--duration-hover) ease,
+    color var(--duration-hover) ease;
+}
+
+.ui-button:focus-visible,
+.ui-input:focus-visible,
+.ui-segmented__item:focus-visible,
+.ui-menu__item:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ui-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.ui-button--primary {
+  color: var(--color-live-accent-contrast);
+  background: var(--color-live-accent);
+}
+
+.ui-button--secondary {
+  border-color: var(--color-control-border);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+}
+
+.ui-button--ghost {
+  color: var(--color-text-secondary);
+  background: transparent;
+}
+
+.ui-button--danger {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  background: transparent;
+}
+
+.ui-button--compact {
+  min-height: 32px;
+  padding: 0 9px;
+  font-size: 12px;
+}
+
+.ui-button--icon {
+  width: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+}
+
+.ui-button__icon,
+.ui-menu__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.ui-input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.ui-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.ui-input[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.ui-segmented {
+  display: inline-grid;
+  grid-auto-columns: minmax(72px, auto);
+  grid-auto-flow: column;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid var(--color-control-border);
+  border-radius: 6px;
+  background: var(--color-elevated);
+}
+
+.ui-segmented__item {
+  overflow: hidden;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ui-segmented__item[data-state='on'] {
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  font-weight: 600;
+}
+
+.ui-menu {
+  min-width: 180px;
+  padding: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
+  animation: ui-overlay-in var(--duration-overlay) ease;
+}
+
+.ui-menu__item {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 9px;
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  outline: none;
+}
+
+.ui-menu__item[data-highlighted] {
+  background: var(--color-elevated);
+}
+
+.ui-menu__item[data-disabled] {
+  opacity: 0.45;
+}
+
+.ui-menu__item--danger {
+  color: var(--color-danger);
+}
+
+.ui-tooltip {
+  max-width: 260px;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-primary);
+  background: var(--color-elevated);
+  box-shadow: 0 5px 16px rgb(0 0 0 / 16%);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.35;
+  animation: ui-overlay-in var(--duration-overlay) ease;
+  z-index: 100;
+}
+
+.ui-tooltip__arrow {
+  fill: var(--color-elevated);
+}
+
+@keyframes ui-overlay-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (hover: hover) {
+  .ui-button--secondary:hover:not(:disabled),
+  .ui-button--ghost:hover:not(:disabled) {
+    background: var(--color-elevated);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-button,
+  .ui-menu,
+  .ui-tooltip {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .ui-button--primary,
+  .ui-segmented__item[data-state='on'],
+  .ui-menu__item[data-highlighted] {
+    border-color: Highlight;
+    color: HighlightText;
+    background: Highlight;
+  }
+
+  .ui-button:disabled,
+  .ui-menu__item[data-disabled] {
+    color: GrayText;
+    opacity: 1;
+  }
+
+  .ui-segmented__item[data-state='on']:focus-visible {
+    outline-color: HighlightText;
+  }
+}

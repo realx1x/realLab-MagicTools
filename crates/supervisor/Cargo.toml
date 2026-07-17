@@ -1,0 +1,40 @@
+[package]
+name = "supervisor"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+discovery = { path = "../discovery" }
+domain = { path = "../domain" }
+getrandom.workspace = true
+lifecycle = { path = "../lifecycle" }
+logging = { path = "../logging" }
+platform-common = { path = "../platform-common" }
+protocol = { path = "../protocol" }
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+storage = { path = "../storage" }
+thiserror.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+libc.workspace = true
+platform-macos = { path = "../platform-macos" }
+tokio = { workspace = true, features = ["macros", "net", "rt", "sync", "time"] }
+
+[target.'cfg(windows)'.dependencies]
+platform-windows = { path = "../platform-windows" }
+tokio = { workspace = true, features = ["macros", "net", "rt", "sync", "time"] }
+windows = { workspace = true, features = [
+    "Win32_Foundation",
+    "Win32_Globalization",
+    "Win32_Security",
+    "Win32_Security_Authorization",
+    "Win32_Storage_FileSystem",
+    "Win32_System_Com",
+    "Win32_System_Pipes",
+    "Win32_System_Threading",
+    "Win32_UI_Shell",
+] }

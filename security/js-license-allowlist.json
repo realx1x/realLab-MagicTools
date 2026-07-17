@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "allowedLicenses": ["0BSD", "Apache-2.0", "Apache-2.0 OR MIT", "BSD-3-Clause", "ISC", "MIT"],
+  "exceptions": [
+    {
+      "name": "lightningcss",
+      "version": "1.32.0",
+      "license": "MPL-2.0",
+      "reason": "Build-time CSS transformer; MPL file-level obligations remain upstream."
+    },
+    {
+      "name": "lightningcss-darwin-arm64",
+      "version": "1.32.0",
+      "license": "MPL-2.0",
+      "reason": "Pinned native companion for the reviewed build-time CSS transformer."
+    },
+    {
+      "name": "lightningcss-darwin-x64",
+      "version": "1.32.0",
+      "license": "MPL-2.0",
+      "reason": "Pinned native companion for the reviewed build-time CSS transformer."
+    },
+    {
+      "name": "lightningcss-linux-x64-gnu",
+      "version": "1.32.0",
+      "license": "MPL-2.0",
+      "reason": "Pinned native companion used by the Linux supply-chain runner."
+    },
+    {
+      "name": "lightningcss-win32-x64-msvc",
+      "version": "1.32.0",
+      "license": "MPL-2.0",
+      "reason": "Pinned native companion for the supported Windows x64 target."
+    }
+  ]
+}

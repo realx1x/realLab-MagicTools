@@ -1,0 +1,86 @@
+name: Compile
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: compile-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  MACOSX_DEPLOYMENT_TARGET: '13.0'
+
+jobs:
+  compile:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            os: windows-2022
+            runner-arch: x64
+            rust-target: x86_64-pc-windows-msvc
+          - name: macOS Intel
+            os: macos-15-intel
+            runner-arch: x64
+            rust-target: x86_64-apple-darwin
+          - name: macOS Apple Silicon
+            os: macos-14
+            runner-arch: arm64
+            rust-target: aarch64-apple-darwin
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.23.1
+
+      - name: Install pinned pnpm
+        run: npm install --global --ignore-scripts --no-audit --no-fund pnpm@11.9.0
+
+      - name: Verify native runner architecture
+        run: node -e "if (process.arch !== '${{ matrix.runner-arch }}') process.exit(1)"
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: rustup toolchain install 1.97.0 --profile minimal --component rustfmt --target "${{ matrix.rust-target }}"
+
+      - name: Select pinned Rust toolchain
+        shell: bash
+        run: rustup default 1.97.0
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting
+        run: |
+          pnpm format:check
+          cargo fmt --all --check
+
+      - name: Check frontend types
+        run: pnpm typecheck
+
+      - name: Build web assets
+        run: pnpm build:web
+
+      - name: Compile Rust workspace
+        run: cargo check --workspace --all-targets --locked --target "${{ matrix.rust-target }}"
+
+      - name: Compile explicitly authorized fixture targets
+        run: cargo check -p test-fixtures --all-targets --features fixture-runtime --locked --target "${{ matrix.rust-target }}"

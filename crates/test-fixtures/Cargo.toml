@@ -1,0 +1,21 @@
+[package]
+name = "test-fixtures"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+default = []
+fixture-runtime = ["dep:getrandom"]
+
+[dependencies]
+getrandom = { workspace = true, optional = true }
+
+[dev-dependencies]
+getrandom.workspace = true
+
+[[bin]]
+name = "magictools-test-fixture"
+path = "src/bin/magictools-test-fixture.rs"
+required-features = ["fixture-runtime"]

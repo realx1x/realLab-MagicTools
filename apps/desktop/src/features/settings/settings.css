@@ -1,0 +1,271 @@
+.settings-diagnostics {
+  display: grid;
+  gap: 16px;
+  padding: 18px 16px 22px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.settings-diagnostics-header,
+.settings-diagnostics-title,
+.settings-diagnostics-message,
+.settings-diagnostics-feedback,
+.settings-diagnostics-actions,
+.settings-diagnostics-option {
+  display: flex;
+  min-width: 0;
+}
+
+.settings-diagnostics-header {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.settings-diagnostics-title {
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-diagnostics-title > svg {
+  flex: 0 0 auto;
+  color: var(--color-live-accent);
+}
+
+.settings-diagnostics h2,
+.settings-diagnostics p,
+.settings-diagnostics-contents,
+.settings-diagnostics-contents ul {
+  margin: 0;
+}
+
+.settings-diagnostics h2 {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.settings-diagnostics p {
+  margin-top: 5px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.settings-diagnostics-message,
+.settings-diagnostics-feedback {
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.settings-diagnostics-message > svg,
+.settings-diagnostics-feedback > svg {
+  flex: 0 0 auto;
+  color: var(--color-warning);
+}
+
+.settings-diagnostics-message > div,
+.settings-diagnostics-feedback > div {
+  display: grid;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 3px;
+}
+
+.settings-diagnostics-message strong,
+.settings-diagnostics-feedback strong,
+.settings-diagnostics-actions strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.settings-diagnostics-message[data-tone='danger'] > svg,
+.settings-diagnostics-feedback[data-tone='danger'] > svg {
+  color: var(--color-danger);
+}
+
+.settings-diagnostics-feedback[data-tone='success'] > svg {
+  color: var(--color-running);
+}
+
+.settings-diagnostics-message .ui-button {
+  flex: 0 0 auto;
+}
+
+.settings-diagnostics-contents {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+.settings-diagnostics-contents ul {
+  padding: 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  list-style: none;
+}
+
+.settings-diagnostics-contents li {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 11px 0;
+}
+
+.settings-diagnostics-contents li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.settings-diagnostics-contents li[data-available='false'] {
+  color: var(--color-text-muted);
+}
+
+.settings-diagnostics-option {
+  align-items: flex-start;
+  gap: 9px;
+  cursor: pointer;
+}
+
+.settings-diagnostics-option > input {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  margin: 1px 0 0;
+  accent-color: var(--color-live-accent);
+}
+
+.settings-diagnostics-option > input:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.settings-diagnostics-option > input:disabled,
+.settings-diagnostics-contents:disabled .settings-diagnostics-option {
+  cursor: not-allowed;
+}
+
+.settings-diagnostics-option > span:last-child {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.settings-diagnostics-option strong {
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settings-diagnostics-option small,
+.settings-diagnostics-metadata,
+.settings-diagnostics-actions span {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.settings-diagnostics-option--required {
+  cursor: default;
+}
+
+.settings-diagnostics-required-icon {
+  display: grid;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  place-items: center;
+  margin-top: 1px;
+  color: var(--color-running);
+}
+
+.settings-diagnostics-metadata {
+  max-width: 260px;
+  text-align: right;
+}
+
+.settings-diagnostics-actions {
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.settings-diagnostics-actions > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.settings-diagnostics-actions .ui-button {
+  flex: 0 0 auto;
+}
+
+.settings-diagnostics-feedback code {
+  overflow-wrap: anywhere;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.settings-diagnostics-file-name {
+  overflow-wrap: anywhere;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+}
+
+.settings-diagnostics-spin {
+  animation: settings-diagnostics-spin 1.2s linear infinite;
+}
+
+@keyframes settings-diagnostics-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 719px) {
+  .settings-diagnostics-contents li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .settings-diagnostics-metadata {
+    max-width: none;
+    padding-left: 25px;
+    text-align: left;
+  }
+
+  .settings-diagnostics-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .settings-diagnostics-actions .ui-button {
+    width: 100%;
+  }
+
+  .settings-diagnostics-message[data-tone='danger'] {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-diagnostics-spin {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .settings-diagnostics-title > svg,
+  .settings-diagnostics-message > svg,
+  .settings-diagnostics-feedback > svg,
+  .settings-diagnostics-required-icon {
+    color: CanvasText;
+  }
+
+  .settings-diagnostics-option > input {
+    accent-color: Highlight;
+  }
+}

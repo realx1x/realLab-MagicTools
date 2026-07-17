@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@source '../../../../packages/ui/src';
+@import '@dpm/ui/styles.css';
+@import './base.css';
+@import '../features/launch-profiles/launchProfiles.css';
+@import '../features/processes/processes.css';

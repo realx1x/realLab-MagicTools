@@ -1,0 +1,31 @@
+[package]
+name = "platform-windows"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+
+[target.'cfg(windows)'.dependencies]
+discovery = { path = "../discovery" }
+domain = { path = "../domain" }
+lifecycle = { path = "../lifecycle" }
+platform-common = { path = "../platform-common" }
+tokio = { workspace = true, features = ["rt"] }
+windows = { workspace = true, features = [
+    "Wdk_System_SystemInformation",
+    "Wdk_System_Threading",
+    "Win32_Foundation",
+    "Win32_NetworkManagement_IpHelper",
+    "Win32_Networking_WinSock",
+    "Win32_Security",
+    "Win32_Security_Credentials",
+    "Win32_Globalization",
+    "Win32_Storage_FileSystem",
+    "Win32_System_Console",
+    "Win32_System_Diagnostics_Debug",
+    "Win32_System_JobObjects",
+    "Win32_System_Threading",
+    "Win32_System_WindowsProgramming",
+] }

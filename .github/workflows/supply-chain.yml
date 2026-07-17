@@ -1,0 +1,150 @@
+name: Supply Chain
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supply-chain
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.23.1
+
+      - name: Install pinned pnpm
+        run: npm install --global --ignore-scripts --no-audit --no-fund pnpm@11.9.0
+
+      - name: Install frontend dependencies without lifecycle scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install 1.97.0 --profile minimal
+
+      - name: Select pinned Rust toolchain
+        run: rustup default 1.97.0
+
+      - name: Install pinned Rust audit tools
+        run: |
+          cargo install cargo-audit --version 0.21.2 --locked
+          cargo install cargo-deny --version 0.18.4 --locked
+
+      - name: Check JavaScript licenses
+        run: pnpm run licenses:check:js
+
+      - name: Audit Rust advisories
+        run: cargo audit --deny warnings
+
+      - name: Enforce Rust dependency policy
+        run: cargo deny check advisories bans licenses sources
+
+      - name: Audit JavaScript advisories
+        run: pnpm audit --audit-level high
+
+  sbom:
+    name: CycloneDX SBOM
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.23.1
+
+      - name: Install pinned pnpm
+        run: npm install --global --ignore-scripts --no-audit --no-fund pnpm@11.9.0
+
+      - name: Install frontend dependencies without lifecycle scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install 1.97.0 --profile minimal
+
+      - name: Select pinned Rust toolchain
+        run: rustup default 1.97.0
+
+      - name: Install pinned Rust SBOM tool
+        run: cargo install cargo-cyclonedx --version 0.5.7 --locked
+
+      - name: Generate JavaScript CycloneDX SBOM
+        run: |
+          mkdir -p artifacts/sbom
+          pnpm dlx @cyclonedx/cdxgen@11.10.0 -t js --no-babel --validate --spec-version 1.5 -o artifacts/sbom/javascript.cdx.json .
+          test -s artifacts/sbom/javascript.cdx.json
+
+      - name: Generate target-aware Rust CycloneDX SBOMs
+        shell: bash
+        run: |
+          mapfile -t package_dirs < <(
+            printf '%s\n' apps/desktop/src-tauri
+            find crates -mindepth 2 -maxdepth 2 -type f -name Cargo.toml -printf '%h\n' | sort
+          )
+          targets=(
+            x86_64-pc-windows-msvc
+            x86_64-apple-darwin
+            aarch64-apple-darwin
+          )
+          for target in "${targets[@]}"; do
+            cargo cyclonedx --all --all-features --format json --spec-version 1.5 --target "$target" --override-filename bom
+            for package_dir in "${package_dirs[@]}"; do
+              source_path="$package_dir/bom.json"
+              destination="artifacts/sbom/rust/$target/$package_dir/bom.json"
+              test -s "$source_path"
+              mkdir -p "$(dirname "$destination")"
+              mv "$source_path" "$destination"
+            done
+          done
+          expected_count=$(( ${#package_dirs[@]} * ${#targets[@]} ))
+          actual_count=$(find artifacts/sbom/rust -type f -name bom.json | wc -l | tr -d ' ')
+          test "$actual_count" -eq "$expected_count"
+
+      - name: Validate CycloneDX JSON
+        shell: bash
+        run: |
+          validated_count=0
+          while IFS= read -r -d '' sbom; do
+            node -e '
+              const fs = require("node:fs");
+              const bom = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+              if (bom.bomFormat !== "CycloneDX" || bom.specVersion !== "1.5") process.exit(1);
+            ' "$sbom"
+            validated_count=$((validated_count + 1))
+          done < <(find artifacts/sbom -type f -name '*.json' -print0)
+          test "$validated_count" -gt 1
+
+      - name: Verify lockfiles are unchanged
+        run: git diff --exit-code -- Cargo.lock pnpm-lock.yaml
+
+      - name: Upload CycloneDX SBOMs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: magictools-sbom
+          path: artifacts/sbom/**
+          if-no-files-found: error
+          retention-days: 14
